@@ -1,0 +1,227 @@
+<header>
+    <div style="text-align: center;">
+        OLIMPIJADADB
+    </div>
+
+    <div class="divLogin" *ngIf="!userService.ulogovan">
+        <form>
+            <table>
+                <tr>
+                    <td>username:</td>
+                    <td>
+                        <input type="text" name='korIme' [(ngModel)]="korIme">
+                    </td>
+
+                    <td>password:</td>
+                    <td>
+                        <input type="text" name="lozinka" [(ngModel)]="lozinka">
+                    </td>
+
+                    <td colspan="2">
+                        <button (click)="signIn()">sign in</button>
+                    </td>
+                </tr>
+            </table>
+            <div *ngIf='poruka' class='greska'>
+                {{poruka}}
+            </div>
+        </form>
+    </div>
+</header>
+
+<body>
+    <div class='topnav'>
+        <a [routerLink]="" (click)="vratiSe()" *ngIf="userService.ulogovan">Korisnicka stranica</a>
+        <div class="dropdown">
+            <button class="dropbtn">Aktivnosti
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a [routerLink]="" (click)="toggleZemljaActive()">pregled zemalja</a>
+                <a [routerLink]="" (click)="toggleMedaljaActive()">pregled medalja</a>
+                <a [routerLink]="" (click)="toggledoughnutActive()">osvojene medalje po zemljama</a>
+                <a [routerLink]="" (click)="toggleSearchActive()">pretraga ucesnika</a>
+            </div>
+        </div>
+
+        <div class="topnav-right" *ngIf="userService.ulogovan">
+            <a [routerLink]="" (click)="userService.odjaviSe()">Odjavi se</a>
+        </div>
+    </div>
+
+
+    <div class="container" *ngIf="zemljaActive">
+        <table class='tabela'>
+            <thead>
+                <tr>
+                    <th>zastava</th>
+                    <th>ime</th>
+                    <th>broj sportista</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let lis of listaZemalja | paginate:{
+        itemsPerPage: ztableSize,
+        currentPage: zpage
+    
+    };
+    let i = index" [class.active]="i == currentIndex">
+                    <td>
+                        <img width="80px" height="45px" src="assets/{{lis.zastava}}">
+                    </td>
+                    <td>{{lis.ime}}</td>
+                    <td>{{lis.brojSportista}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-center">
+            <pagination-controls responsive="true" previousLabel="Prev" nextLabel="Next"
+                (pageChange)="zonTableDataChange($event)">
+            </pagination-controls>
+        </div>
+
+
+    </div>
+
+    <div class="container" *ngIf="medaljaActive">
+        <table class='tabela'>
+            <thead>
+                <tr>
+                    <th>rang</th>|
+                    <th>ime</th>|
+                    <th>broj zlatnih medalja</th>|
+                    <th>broj srebrnih medalja</th>|
+                    <th>broj bronzanih medalja</th>|
+                    <th>ukupan broj medalja</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let n of listaZemalja2 | paginate:{
+        itemsPerPage: mtableSize,
+        currentPage: mpage
+    
+    };
+    let i = index" [class.active]="i == currentIndex">
+                    <td>{{(mpage-1)*10+i+1}}</td>|
+                    <td>{{n.ime}} </td>|
+                    <td>{{n.brojZ}}</td>|
+                    <td>{{n.brojS}}</td>|
+                    <td>{{n.brojB}}</td>|
+                    <td>{{n.brojZ+n.brojS+n.brojB}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-center">
+            <pagination-controls responsive="true" previousLabel="Prev" nextLabel="Next"
+                (pageChange)="monTableDataChange($event)">
+            </pagination-controls>
+        </div>
+
+
+    </div>
+
+    <div style="display: block; " *ngIf="doughnutActive">
+        <canvas baseChart [data]="doughnutChartData" [labels]="doughnutChartLabels" [chartType]="doughnutChartType" height="60px"></canvas>
+    </div>
+
+    <div *ngIf="searchActive">
+        <table>
+            <tr>
+                <td>ime i prezime:</td>
+                <td>
+                    <input type="text" name='ime' [(ngModel)]='ime'>
+                </td>
+            </tr>
+            <tr>
+                <td>zemlja:</td>
+                <select name="zemlje" [(ngModel)]='zemlja' style="width: 100%;">
+                    <option value="">Sve zemlje</option>
+                    <option [ngValue]="zem.ime" *ngFor='let zem of listaZemalja4'>{{zem.ime}}</option>
+                </select>
+            </tr>
+            <tr>
+                <td>sport:</td>
+                <select name="sport" [(ngModel)]='sport' style="width: 100%;">
+                    <option value="">Svi sportovi</option>
+                    <option [ngValue]="spo.naziv"  *ngFor='let spo of listaSport'>{{spo.naziv}}</option>
+                </select>
+            </tr>
+            <tr>
+                <td>disciplina:</td>
+                <select name="disciplina" [(ngModel)]='disciplina' style="width: 100%;">
+                    <option value="">Sve sportske discipline</option>
+                    <option [ngValue]="disc.naziv" *ngFor='let disc of listaDisciplina'>{{disc.naziv}}</option>
+                </select>
+            </tr>
+            <tr>
+                <td>pol:</td>
+                <td>
+                    <input type='radio' name='pol' [(ngModel)]='pol' value='m'>M
+                    <input type='radio' name='pol' [(ngModel)]='pol' value='z'>Z
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" name='osvajac' [(ngModel)]='osvajac'> samo osvajaci medalja
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button (click)='pretraziUcesnike()'>Pretrazi</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="container" *ngIf="listaUcesnika && searchActive" >
+        <table class='tabela' >
+            <thead>
+                <tr>
+                    <th>ime i prezime</th>
+                    <th>zemlja</th>
+                    <th>sport</th>
+                    <th>discipline</th>
+                    <th>pol</th>
+                    <th>medalja</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let u of listaUcesnika | paginate:{
+                itemsPerPage: stableSize,
+                currentPage: spage
+            }; let i = index" [class.active]="i == currentIndex">
+                    <td>{{u.ime}}</td>
+                    <td>{{u.zemlja}}</td>
+                    <td>{{u.sport}}</td>
+                    <td>
+                        <ul>
+                            <li *ngFor='let d of u.disciplina'>{{d.naziv}}</li>
+                        </ul>
+                    </td>
+                    <td>{{u.pol}}</td>
+                    <td>{{u.medalja}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-center">
+            <pagination-controls responsive="true" previousLabel="Prev" nextLabel="Next"
+                (pageChange)="sonTableDataChange($event)">
+            </pagination-controls>
+        </div>
+        <div>broj rezultata:
+            <input type='radio' name='pol' [(ngModel)]='stableSize' value='10'>10
+            <input type='radio' name='pol' [(ngModel)]='stableSize' value='20'>20
+            <input type='radio' name='pol' [(ngModel)]='stableSize' value='50'>50
+            <input type='radio' name='pol' [(ngModel)]='stableSize' value='100'>100
+        </div>
+    </div>
+
+</body>
+
+<footer>
+    <div class="link_registracija">
+        <a routerLink='register'  *ngIf="!userService.ulogovan">registracija</a> |
+        <a routerLink='promena'>promeni lozinku</a>
+    </div>
+</footer>

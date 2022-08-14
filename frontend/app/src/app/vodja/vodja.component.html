@@ -1,0 +1,229 @@
+<header>
+    <div style="text-align: center;">
+        OLIMPIJADADB
+    </div>
+</header>
+
+<body>
+    <div class='topnav'>
+        <a routerLink="poc" (click)="ruter.navigate(['']);">pocetna</a>
+
+        <div class="dropdown">
+            <button class="dropbtn">Aktivnosti
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a (click)="toggleUcesnikActive()">unos ucesnika</a>
+                <a (click)="toggleEkipactive()">formiranje ekipa</a>
+                <a (click)="togglePrijavactive()">prijava ekipa za takmicenje</a>
+                <a (click)="togglePregledctive()">pregled takmicara po sportovima</a>
+            </div>
+        </div>
+
+        <div class="topnav-right">
+            <a routerLink="" (click)="korisnikService.odjaviSe()">Odjavi se</a>
+        </div>
+    </div>
+
+
+    <div *ngIf='unesiUcesnikActive'>
+        <b>unesi ucesnika:</b>
+        <table>
+            <tr>
+                <td>ime i prezime:</td>
+                <td>
+                    <input type="text" name='uime' [(ngModel)]='uime'>
+                </td>
+            </tr>
+            <tr>
+                <td>sport:</td>
+                <select name="usport" [(ngModel)]='usport' style="width: 100%;">
+                    <option value="" disabled selected>Svi sportovi</option>
+                    <option *ngFor='let uspo of ulistaSport' [ngValue]="uspo">{{uspo.naziv}}</option>
+                </select>
+            </tr>     
+            <tr>
+                <td>pol:</td>
+                <td>
+                    <input type='radio' name='pol' [(ngModel)]='upol' value='m'>M
+                    <input type='radio' name='pol' [(ngModel)]='upol' value='z'>Z
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button (click)='unesiUcesnika()'>Unesi ucesnika</button>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>ucesnik:</td>
+                <select name="ucesnik" [(ngModel)]='dime' style="width: 100%;" (change)="ucesnikDisciplina()">
+                    <option value="" >Svi ucesnici</option>
+                    <option *ngFor='let uces of ulistaUcesnika' [ngValue]="uces">{{uces.ime}}</option>
+                </select>
+            </tr> 
+            <tr>
+                <td>disciplina:</td>
+                <select name="disciplina" [(ngModel)]='ddisciplina' style="width: 100%;">
+                    <option value="" >Sve discipline</option>
+                    <option *ngFor='let ucesd of ulistaDisciplina' [ngValue]="ucesd">{{ucesd.naziv}}</option>
+                </select>
+            </tr> 
+            <tr>
+                <td colspan="2">
+                    <button (click)='unesiUcesnikDisciplina()'>unesi disciplinu</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div *ngIf='unesiEkipaActive'>
+        <b>formiraj ekipu:</b>
+        <table>
+            <tr>
+                <td>naziv:</td>
+                <td>
+                    <input type="text" name='enaziv' [(ngModel)]='enaziv'>
+                </td>
+            </tr>
+            <tr>
+                <td>pol:</td>
+                <td>
+                    <input type='radio' name='pol' [(ngModel)]='epol' value='m'>M
+                    <input type='radio' name='pol' [(ngModel)]='epol' value='z'>Z
+                </td>
+            </tr>
+            <tr>
+                <td>sport:</td>
+                <select name="esport" [(ngModel)]='esport' style="width: 100%;" (change)="ekipaDisciplina()" >
+                    <option value="">Svi sportovi</option>
+                    <option *ngFor='let espo of elistaSport' [ngValue]="espo">{{espo.naziv}}</option>
+                </select>
+            </tr>
+            <tr>
+                <td>disciplina:</td>
+                <select name="edisciplina" [(ngModel)]='edisciplina' style="width: 100%;">
+                    <option value="">Sve discipline</option>
+                    <option *ngFor='let edis of elistaDisciplina' [ngValue]="edis">{{edis.naziv}}</option>
+                </select>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button (click)='unesiEkipu()'>Unesi ekipu</button>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>ekipa:</td>
+                <select name="ekipa" [(ngModel)]='enaziv2' style="width: 100%;" (change)="ekipaDohvatiUcesnike()">
+                    <option value="" >Sve ekipe</option>
+                    <option *ngFor='let uek of elistaEkipa' [ngValue]="uek">{{uek.naziv}}</option>
+                </select>
+            </tr> 
+            <tr>
+                <td>ucesnici:</td>
+                <select name="ecesnik" [(ngModel)]='eUcesnik' style="width: 100%;">
+                    <option value="" >Svi ucesnici</option>
+                    <option *ngFor='let euces of elistaUcesnika' [ngValue]="euces">{{euces.ime}}</option>
+                </select>
+            </tr> 
+            <tr>
+                <td colspan="2">
+                    <button (click)='unesiUcesnikaEkipi()'>unesi ucesnika</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div *ngIf='prijavaEkipaActive'>
+        <b>prijavi ucesnika:</b>
+        <table>
+            <tr>
+                <td>takmicenje:</td>
+                <select name="takmicenje" [(ngModel)]='pTakmicenje' style="width: 100%;" (change)="prijavaDohvatiEkipe()">
+                    <option value="" >Sva takmicenja</option>
+                    <option *ngFor='let takm of plistaTakmicenja' [ngValue]="takm"> {{takm.sport}} - {{takm.disciplina}} - {{takm.pol}} - {{takm.tip}}</option>
+                </select>
+            </tr> 
+            <tr *ngIf="pBoolEk">
+                <td>ekipe:</td>
+                <select name="ekipe" [(ngModel)]='pEkipa' style="width: 100%;">
+                    <option value="" >Sve ekipe</option>
+                    <option *ngFor='let pek of plistaEkipa' [ngValue]="pek"> {{pek.naziv}}</option>
+                </select>
+            </tr> 
+            <tr *ngIf="pBoolUc">
+                <td>ucesnici:</td>
+                <select name="ucesnici" [(ngModel)]='pUcesnik' style="width: 100%;">
+                    <option value="" >Svi ucesnici</option>
+                    <option *ngFor='let puc of plistaUcesnika' [ngValue]="puc"> {{puc.ime}}</option>
+                </select>
+            </tr> 
+            <tr>
+                <td colspan="2">
+                    <button (click)='prijavaEkipaZaTakmicenje()'>prijavi ekipu </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div *ngIf='pregledActive'>
+        <table>
+
+            <tr>
+                <td>sport:</td>
+                <select name="sport" [(ngModel)]='dsport' style="width: 100%;" (change)="SearchDisciplina();dohvatiBrojClanovaSport();listaUcesnikaBool=false;ddisciplina=null">
+                    <option value="">Svi sportovi</option>
+                    <option *ngFor='let spo of listaSport' [ngValue]="spo">{{spo.naziv}}</option>
+                </select>
+            </tr>
+            <tr>
+                <td>disciplina:</td>
+                <select name="disciplina" [(ngModel)]='ddisciplina' style="width: 100%;" (change)="pretraziUcesnikeDisciplina()">
+                    <option value="">Sve sportske discipline</option>
+                    <option *ngFor='let disc of listaDisciplina'>{{disc.naziv}}</option>
+                </select>
+            </tr>
+
+            
+
+        </table>
+        <div class="breadcrumbs" *ngIf="dsport">
+            <span (click)="ddisciplina=null">{{dsport?.naziv}} [{{broj2}}]</span> > <span>{{ddisciplina}}</span>
+        </div>
+<br/>
+        <table *ngIf="listaUcesnikaBool">
+            <thead>
+                <tr>
+                    <th>ime i prezime</th>
+                    <th>zemlja</th>
+                    <th>sport</th>
+                    <th>discipline</th>
+                    <th>pol</th>
+                    <th>medalja</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let u of listaUcesnikaDisciplina">
+                    <td>{{u.ime}}</td>
+                    <td>{{u.zemlja}}</td>
+                    <td>{{u.sport}}</td>
+                    <td>
+                        <ul>
+                            <li *ngFor='let d of u.disciplina'>{{d.naziv}}</li>
+                        </ul>
+                    </td>
+                    <td>{{u.pol}}</td>
+                    <td>{{u.medalja}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+<footer>
+    <div>
+        ukupan broj clanova: {{broj}}
+    </div>
+</footer>

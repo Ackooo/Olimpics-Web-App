@@ -1,0 +1,79 @@
+<header>
+    <div style="text-align: center;">
+        OLIMPIJADADB
+    </div>
+</header>
+
+<body>
+    <div class='topnav'>
+        <a routerLink="poc" (click)="ruter.navigate(['']);">pocetna</a>
+    </div>
+<div>
+    <table>
+        <tr>
+            <td>korisnicko ime:</td>
+            <td>
+                <input type="text" name='korIme' [(ngModel)]='korIme'>
+            </td>
+        </tr>
+        <tr>
+            <td>lozinka:</td>
+            <td>
+                <input name='lozinka' [(ngModel)]='lozinka' required [pattern]="passPattern" #uname="ngModel">
+                <div *ngIf="uname.errors" [ngClass] = "'error'"> 
+                    <div *ngIf="uname.errors.required"> 
+                        
+                    </div>						
+                    <div *ngIf="uname.errors.pattern"> 
+                        los format
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>ime:</td>
+            <td>
+                <input type="text" name='ime' [(ngModel)]='ime'>
+            </td>
+        </tr>
+        <tr>
+            <td>prezime:</td>
+            <td>
+                <input type="text" name='prezime' [(ngModel)]='prezime'>
+            </td>
+        </tr>
+        <tr>
+            <td>nacionalnost:</td>
+            <select name="nacionalnost" [(ngModel)]='nacionalnost' style="width: 100%;">
+                <option value="" >Sve nacionalnosti</option>
+                <option *ngFor='let u of listanacionalnost' [ngValue]="u.ime">{{u.ime}}</option>
+            </select>
+        </tr> 
+        <tr>
+            <td>adresa elektronske poste:</td>
+            <td>
+                <input type="text" name='Eadresa' [(ngModel)]='Eadresa'>
+            </td>
+        </tr>
+        <tr>
+            <td>tip:</td>
+            <td>
+                <input type='radio' name='tip' [(ngModel)]='tip' value='organizator'>organizator
+                <input type='radio' name='tip' [(ngModel)]='tip' value='vodja'>vodja
+                <input type='radio' name='tip' [(ngModel)]='tip' value='delegat'>delegat
+            </td>
+        </tr>
+        <tr *ngIf="!uname.invalid">
+            <td colspan="2">
+                <button (click)='register()'>dodaj korisnika</button>
+            </td>
+        </tr>
+    </table>
+</div>
+    
+</body>
+
+
+<footer>
+
+</footer>

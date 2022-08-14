@@ -1,0 +1,66 @@
+<header>
+    <div style="text-align: center;">
+        OLIMPIJADADB
+    </div>
+</header>
+
+<body>
+
+    <div class='topnav'>
+        <a routerLink="poc" (click)="ruter.navigate(['']);">pocetna</a>
+        <div class="topnav-right">
+            <a routerLink="" (click)="userService.odjaviSe()">Odjavi se</a>
+        </div>
+    </div>
+<div>
+    <table>
+        <tr>
+            <td>korisnicko ime:</td>
+            <td>
+                <input type="text" name='korIme' [(ngModel)]='korIme' required="true">
+            </td>
+        </tr>
+        <tr>
+            <td>uneti staru:</td>
+            <td>
+                <input type="text" name='lozinka' [(ngModel)]='lozinka' pattern="[A-Za-z]{3}">
+            </td>
+        </tr>
+        <tr>
+            <td>uneti novu:</td>
+            <td>
+                <input name='nova1' [(ngModel)]='nova1' required [pattern]="passPattern" #uname="ngModel">
+                <div *ngIf="uname.errors" [ngClass] = "'error'"> 
+                    <div *ngIf="uname.errors.required"> 
+                        
+                    </div>						
+                    <div *ngIf="uname.errors.pattern"> 
+                        los format
+                    </div>
+                </div>
+                
+            </td>
+        </tr>
+        <tr>
+            <td>potvrditi novu:</td>
+            <td>
+                <input type="text" name='nova2' [(ngModel)]='nova2'>
+            </td>
+        </tr>
+        <tr *ngIf="!uname.invalid">
+            <td colspan="2">
+                <button (click)='promeniLozinku()'>promeni lozinku</button>
+            </td>
+        </tr>
+ 
+    </table>
+</div>
+<div *nIf="nova1.errors?.pattern">
+    lozinka u losem formatu
+</div>
+    
+</body>
+
+<footer>
+
+</footer>

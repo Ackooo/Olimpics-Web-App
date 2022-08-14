@@ -1,0 +1,498 @@
+<header>
+    <div style="text-align: center;">
+        OLIMPIJADADB
+    </div>
+</header>
+
+<body>
+    <div class='topnav'>
+        <a routerLink="poc" (click)="ruter.navigate(['']);">pocetna</a>
+
+        <div class="dropdown">
+            <button class="dropbtn">Aktivnosti
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a [routerLink]="" (click)="toggleRaspActive()">unos rasporeda takmicenja</a>
+                <a [routerLink]="" (click)="toggleRezActive()">unos rezultata takmicenja</a>
+            </div>
+        </div>
+
+        <div class="topnav-right">
+            <a routerLink="" (click)="korisnikService.odjaviSe()">Odjavi se</a>
+        </div>
+    </div>
+    <div *ngIf="unesiRasporedActive">
+        <b>unesi raspored:</b>
+        <table>
+            <tr>
+                <td>takmicenje:</td>
+                <td> <select name="rtakmicenje" [(ngModel)]='Rtakmicenje' style="width: 100%;" (change)="inicRaspored()">
+                        <option value="">Sva takmicenja</option>
+                        <option *ngFor='let rtakm of RlistaTakmicenja' [ngValue]="rtakm"> {{rtakm.sport}} -
+                            {{rtakm.disciplina}}
+                            - {{rtakm.pol}} - {{rtakm.tip}}</option>
+                    </select></td>
+            </tr>
+
+        </table>
+
+        <table>
+            <tr *ngIf="RprikazB">
+                <button (click)="pokreniAlgoritam()">pokreni algoritam</button>
+            </tr>
+            <tr *ngIf="RprikazG">
+                <td>uneti raspored za grupu: </td>
+                <td>
+                    datum:<input name='raspored' [(ngModel)]='datumG' [pattern]="regexDate" #uname="ngModel">
+
+                    vreme:<input  name='raspored' [(ngModel)]='vremeG' [pattern]="regexTime" #uname1="ngModel">
+
+                    lokacija:<input type="text" name='raspored' [(ngModel)]='lokacijaG'>
+                </td>
+                <td *ngIf="!uname.errors && !uname1.errors">
+                    <button (click)="unesiRasporedG()">unesi</button>
+                </td>
+                <td *ngIf="uname.errors">
+                    los format datuma!
+                </td>
+                <td *ngIf="uname1.errors">
+                    los format vremena!
+                </td>
+            </tr>
+            <tr *ngIf="RprikazQ">
+                <td>uneti raspored za cetvrtfinale: </td>
+                <td>
+                    datum:<input name='raspored' [(ngModel)]='datumQ'[pattern]="regexDate" #uname2="ngModel">
+   
+                    vreme:<input  name='raspored' [(ngModel)]='vremeQ'[pattern]="regexTime" #uname3="ngModel">
+
+                    lokacija:<input type="text" name='raspored' [(ngModel)]='lokacijaQ'>
+                </td>
+                <td *ngIf="!uname2.errors && !uname3.errors">
+                    <button (click)="unesiRasporedQ()">unesi</button>
+                </td>
+                <td *ngIf="uname2.errors">
+                    los format datuma!
+                </td>
+                <td *ngIf="uname3.errors">
+                    los format vremena!
+                </td>
+            </tr>
+            <tr *ngIf="RprikazS">
+                <td>uneti raspored za polufinale: </td>
+                <td>
+                    datum:<input name='raspored' [(ngModel)]='datumS'[pattern]="regexDate" #uname4="ngModel">
+
+                    vreme:<input name='raspored' [(ngModel)]='vremeS'[pattern]="regexTime" #uname5="ngModel">
+ 
+                    lokacija:<input type="text" name='raspored' [(ngModel)]='lokacijaS'>
+                </td>
+                <td *ngIf="!uname4.errors && !uname5.errors">
+                    <button (click)="unesiRasporedS()">unesi</button>
+                </td>
+                <td *ngIf="uname4.errors">
+                    los format datuma!
+                </td>
+                <td *ngIf="uname5.errors">
+                    los format vremena!
+                </td>
+            </tr>
+            <tr *ngIf="RprikazF">
+                <td>uneti raspored za finale: </td>
+                <td>
+                    datum:<input name='raspored' [(ngModel)]='datumF'[pattern]="regexDate" #uname6="ngModel">
+
+                    vreme:<input name='raspored' [(ngModel)]='vremeF'[pattern]="regexTime" #uname7="ngModel">
+       
+                    lokacija:<input type="text" name='raspored' [(ngModel)]='lokacijaF'>
+                </td>
+                <td *ngIf="!uname6.errors && !uname7.errors">
+                    <button (click)="unesiRasporedF()">unesi</button>
+                </td>
+                <td *ngIf="uname6.errors">
+                    los format datuma!
+                </td>
+                <td *ngIf="uname7.errors">
+                    los format vremena!
+                </td>
+            </tr>
+
+            
+
+        </table>
+    </div>
+
+    <div *ngIf="unesiRezultatActive">
+        <b>unesi rezlutat:</b>
+        <div>
+            <td>takmicenje:</td>
+            <td>
+                <select name="rrtakmicenje" [(ngModel)]='RRtakmicenje' style="width: 100%;" (change)="inicRezultat()">
+                    <option value="">Sva takmicenja</option>
+                    <option *ngFor='let rrtakm of RRlistaTakmicenja' [ngValue]="rrtakm"> {{rrtakm.sport}} -
+                        {{rrtakm.disciplina}} - {{rrtakm.pol}} - {{rrtakm.tip}}</option>
+                </select>
+            </td>
+        </div>
+
+        <div *ngIf="RRprikazG">
+            <tr>
+                <td>prvi mec grupna faza kolo {{RRtakmicenje.uneto+1}}.</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa" [(ngModel)]="ekipag1" style="width: 100%;">
+                        <option *ngFor='let ekg1 of RRtakmicenje.ekipe' [ngValue]='ekg1.ime' >{{ekg1.ime}} -
+                            {{ekg1.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez1" [(ngModel)]='rezultatG1'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa2" [(ngModel)]="ekipag2" style="width: 100%;">
+                        <option *ngFor='let ekg2 of RRtakmicenje.ekipe' [ngValue]='ekg2.ime'>{{ekg2.ime}} -
+                            {{ekg2.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez2" [(ngModel)]='rezultatG2'>
+                </td>
+            </tr>
+
+            <tr>
+                <td>drugi mec grupna faza kolo {{RRtakmicenje.uneto+1}}.</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa3" [(ngModel)]="ekipag3" style="width: 100%;">
+                        <option *ngFor='let ekg3 of RRtakmicenje.ekipe' [ngValue]='ekg3.ime'>{{ekg3.ime}} -
+                            {{ekg3.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez3" [(ngModel)]='rezultatG3'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa4" [(ngModel)]="ekipag4" style="width: 100%;">
+                        <option *ngFor='let ekg4 of RRtakmicenje.ekipe' [ngValue]='ekg4.ime'>{{ekg4.ime}} -
+                            {{ekg4.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez4" [(ngModel)]='rezultatG4'>
+                </td>
+            </tr>
+
+            <tr>
+                <td>treci mec grupna faza kolo {{RRtakmicenje.uneto+1}}.</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa5" [(ngModel)]="ekipag5" style="width: 100%;">
+                        <option *ngFor='let ekg5 of RRtakmicenje.ekipe' [ngValue]='ekg5.ime'>{{ekg5.ime}} -
+                            {{ekg5.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez5" [(ngModel)]='rezultatG5'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa6" [(ngModel)]="ekipag6" style="width: 100%;">
+                        <option *ngFor='let ekg6 of RRtakmicenje.ekipe' [ngValue]='ekg6.ime'>{{ekg6.ime}} -
+                            {{ekg6.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez6" [(ngModel)]='rezultatG6'>
+                </td>
+            </tr>
+
+            <tr>
+                <td>cetvrti mec grupna faza kolo {{RRtakmicenje.uneto+1}}.</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa7" [(ngModel)]="ekipag7" style="width: 100%;">
+                        <option *ngFor='let ekg7 of RRtakmicenje.ekipe' [ngValue]='ekg7.ime'>{{ekg7.ime}} -
+                            {{ekg7.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez7" [(ngModel)]='rezultatG7'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa8" [(ngModel)]="ekipag8" style="width: 100%;">
+                        <option *ngFor='let ekg8 of RRtakmicenje.ekipe' [ngValue]='ekg8.ime'>{{ekg8.ime}} -
+                            {{ekg8.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez8" [(ngModel)]='rezultatG8'>
+                </td>
+            </tr>
+
+            <tr>
+                <td>peti mec grupna faza kolo {{RRtakmicenje.uneto+1}}.</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa9" [(ngModel)]="ekipag9" style="width: 100%;">
+                        <option *ngFor='let ekg9 of RRtakmicenje.ekipe' [ngValue]='ekg9.ime'>{{ekg9.ime}} -
+                            {{ekg9.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez9" [(ngModel)]='rezultatG9'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa10" [(ngModel)]="ekipag10" style="width: 100%;">
+                        <option *ngFor='let ekg10 of RRtakmicenje.ekipe' [ngValue]='ekg10.ime'>{{ekg10.ime}} -
+                            {{ekg10.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez10" [(ngModel)]='rezultatG10'>
+                </td>
+            </tr>
+
+            <tr>
+                <td>sesti mec grupna faza kolo {{RRtakmicenje.uneto+1}}.</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa11" [(ngModel)]="ekipag11" style="width: 100%;">
+                        <option *ngFor='let ekg11 of RRtakmicenje.ekipe' [ngValue]='ekg11.ime'>{{ekg11.ime}} -
+                            {{ekg11.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez11" [(ngModel)]='rezultatG11'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa12" [(ngModel)]="ekipag12" style="width: 100%;">
+                        <option *ngFor='let ekg12 of RRtakmicenje.ekipe' [ngValue]='ekg12.ime'>{{ekg12.ime}} -
+                            {{ekg12.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rez12" [(ngModel)]='rezultatG12'>
+                </td>
+            </tr>
+
+            <td>
+                <button (click)="metodaG()">unesi</button>
+            </td>
+        </div>
+
+        <div  *ngIf="RRprikazQ">
+            <tr>
+                <td>prvi mec cetvrtfinala</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa" [(ngModel)]="ekipaq1" style="width: 100%;">
+                        <option *ngFor='let ekq1 of RRtakmicenje.ekipe' [ngValue]='ekq1.ime'>{{ekq1.ime}} -
+                            {{ekq1.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezq1" [(ngModel)]='rezultatQ1'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa2" [(ngModel)]="ekipaq2" style="width: 100%;">
+                        <option *ngFor='let ekq2 of RRtakmicenje.ekipe' [ngValue]='ekq2.ime'>{{ekq2.ime}} -
+                            {{ekq2.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezq2" [(ngModel)]='rezultatQ2'>
+                </td>
+            </tr>
+            <tr>
+                <td>drugi mec cetvrtfinala</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa" [(ngModel)]="ekipaq3" style="width: 100%;">
+                        <option *ngFor='let ekq3 of RRtakmicenje.ekipe' [ngValue]='ekq3.ime'>{{ekq3.ime}} -
+                            {{ekq3.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezq3" [(ngModel)]='rezultatQ3'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa4" [(ngModel)]="ekipaq4" style="width: 100%;">
+                        <option *ngFor='let ekq4 of RRtakmicenje.ekipe' [ngValue]='ekq4.ime'>{{ekq4.ime}} -
+                            {{ekq4.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezq2" [(ngModel)]='rezultatQ4'>
+                </td>
+            </tr>
+            <tr>
+                <td>treci mec cetvrtfinala</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa" [(ngModel)]="ekipaq5" style="width: 100%;">
+                        <option *ngFor='let ekq5 of RRtakmicenje.ekipe' [ngValue]='ekq5.ime'>{{ekq5.ime}} -
+                            {{ekq5.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezq5" [(ngModel)]='rezultatQ5'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa6" [(ngModel)]="ekipaq6" style="width: 100%;">
+                        <option *ngFor='let ekq6 of RRtakmicenje.ekipe' [ngValue]='ekq6.ime'>{{ekq6.ime}} -
+                            {{ekq6.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezq6" [(ngModel)]='rezultatQ6'>
+                </td>
+            </tr>
+            <tr>
+                <td>cetvrti mec cetvrtfinala</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa" [(ngModel)]="ekipaq7" style="width: 100%;">
+                        <option *ngFor='let ekq7 of RRtakmicenje.ekipe' [ngValue]='ekq7.ime'>{{ekq7.ime}} -
+                            {{ekq7.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezq7" [(ngModel)]='rezultatQ7'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa8" [(ngModel)]="ekipaq8" style="width: 100%;">
+                        <option *ngFor='let ekq8 of RRtakmicenje.ekipe' [ngValue]='ekq8.ime'>{{ekq8.ime}} -
+                            {{ekq8.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezq8" [(ngModel)]='rezultatQ8'>
+                </td>
+            </tr>
+            <td>
+                <button (click)="metodaQ()">unesi</button>
+            </td>
+        </div>
+
+        <div  *ngIf="RRprikazS">
+            <tr>
+                <td>prvi mec polufinala</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa" [(ngModel)]="ekipas1" style="width: 100%;">
+                        <option *ngFor='let eks1 of RRtakmicenje.ekipe' [ngValue]='eks1.ime'>{{eks1.ime}} -
+                            {{eks1.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezs1" [(ngModel)]='rezultatS1'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa6" [(ngModel)]="ekipas2" style="width: 100%;">
+                        <option *ngFor='let eks2 of RRtakmicenje.ekipe' [ngValue]='eks2.ime'>{{eks2.ime}} -
+                            {{eks2.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezs2" [(ngModel)]='rezultatS2'>
+                </td>
+            </tr>
+            <tr>
+                <td>drugi mec polufinala</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa" [(ngModel)]="ekipas3" style="width: 100%;">
+                        <option *ngFor='let eks3 of RRtakmicenje.ekipe' [ngValue]='eks3.ime'>{{eks3.ime}} -
+                            {{eks3.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezs3" [(ngModel)]='rezultatS3'>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipa6" [(ngModel)]="ekipas4" style="width: 100%;">
+                        <option *ngFor='let eks4 of RRtakmicenje.ekipe' [ngValue]='eks4.ime'>{{eks4.ime}} -
+                            {{eks4.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezs4" [(ngModel)]='rezultatS4'>
+                </td>
+            </tr>
+            <td>
+                <button (click)="metodaS()">unesi</button>
+            </td>
+        </div>
+
+        <div  *ngIf="RRprikazF">
+            <tr>
+                <td>finale</td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="ekipaf" [(ngModel)]="ekipaf" style="width: 100%;">
+                        <option *ngFor='let ekf of RRtakmicenje.ekipe' [ngValue]='ekf.ime'>{{ekf.ime}} -
+                            {{ekf.grupa}}</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="rezf" [(ngModel)]='rezultatF'>
+                </td>
+            </tr>
+            <td>
+                <button (click)="metodaF()">unesi</button>
+            </td>
+            <td *ngIf="finaleButton">
+                <button (click)="finalize()">Potvrdi kraj takmicenja</button>
+            </td>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+</body>
+
+<footer>
+
+</footer>

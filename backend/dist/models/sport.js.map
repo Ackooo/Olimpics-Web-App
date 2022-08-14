@@ -1,0 +1,1 @@
+{"version":3,"file":"sport.js","sourceRoot":"","sources":["../../src/models/sport.ts"],"names":[],"mappings":";;;;;AAAA,wDAAkC;AAElC,MAAM,MAAM,GAAG,kBAAQ,CAAC,MAAM,CAAC;AAE/B,IAAI,KAAK,GAAG,IAAI,MAAM,CACtB;IACI,KAAK,EAAC;QACF,IAAI,EAAE,MAAM;KACf;CAGJ,CACA,CAAC;AAEF,kBAAe,kBAAQ,CAAC,KAAK,CAAC,OAAO,EAAE,KAAK,EAAE,OAAO,CAAC,CAAC"}
